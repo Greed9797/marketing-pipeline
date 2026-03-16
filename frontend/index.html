@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipeline de Marketing — @leonardo_ames</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div>
+    <div class="header-eyebrow">Pipeline de Marketing · Ciclo semanal</div>
+    <h1>Relatório de <em>Inteligência</em><br>de Conteúdo</h1>
+  </div>
+  <div class="header-meta">
+    <div class="header-date" id="header-date">— / —<br>—</div>
+    <div class="header-status">
+      <span class="status-dot-header"></span>
+      <span id="header-status-text">CARREGANDO</span>
+    </div>
+    <button class="btn btn-ghost" onclick="openConfigModal()" title="Configurar backend URL" style="font-size:16px;padding:4px 8px;margin-left:8px;">⚙</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-tab active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">Visão Geral</div>
+  <div class="nav-tab" data-tab="topicos"   onclick="switchTab('topicos', this)">Tópicos</div>
+  <div class="nav-tab" data-tab="angulos"   onclick="switchTab('angulos', this)">Ângulos</div>
+  <div class="nav-tab" data-tab="roteiros"  onclick="switchTab('roteiros', this)">Roteiros</div>
+</nav>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ══ VISÃO GERAL ══ -->
+  <section id="visao-geral" class="section active">
+
+    <!-- KPIs dinâmicos -->
+    <div class="kpi-row">
+      <div class="kpi-card green">
+        <div class="kpi-label">Tópicos mapeados</div>
+        <div class="kpi-value" id="kpi-topics">—</div>
+        <div class="kpi-sub" id="kpi-topics-sub">Execute o Researcher</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Ângulos gerados</div>
+        <div class="kpi-value" id="kpi-angles">—</div>
+        <div class="kpi-sub" id="kpi-angles-sub">Execute o Ideator</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">Roteiros prontos</div>
+        <div class="kpi-value" id="kpi-scripts">—</div>
+        <div class="kpi-sub" id="kpi-scripts-sub">Execute o Scripter</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Ciclo ativo</div>
+        <div class="kpi-value" id="kpi-cycle" style="font-size:22px;padding-top:6px">—</div>
+        <div class="kpi-sub" id="kpi-cycle-sub">busca_DD_MM_YYYY</div>
+      </div>
+    </div>
+
+    <!-- Agentes -->
+    <div class="section-header">
+      <h2>Agentes do Pipeline</h2>
+      <div class="line"></div>
+      <button class="btn btn-ghost" onclick="refreshAll()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.06em;padding:4px 12px;">↻ ATUALIZAR</button>
+    </div>
+
+    <div class="agents-grid">
+
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="agent-name-row">
+            <div class="agent-status-dot missing" id="dot-researcher"></div>
+            <span class="agent-name">Researcher</span>
+            <span class="agent-seq">1/4</span>
+          </div>
+          <button class="btn btn-run" id="btn-researcher" onclick="runAgent('researcher')">▶ Executar</button>
+        </div>
+        <div class="agent-meta">
+          Busca tendências no Instagram e web<br>
+          Output: <code style="color:var(--accent2)">topics.json</code> &nbsp;·&nbsp;
+          <span id="last-researcher">Ainda não executado</span>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="agent-name-row">
+            <div class="agent-status-dot missing" id="dot-ideator"></div>
+            <span class="agent-name">Ideator</span>
+            <span class="agent-seq">2/4</span>
+          </div>
+          <button class="btn btn-run" id="btn-ideator" onclick="runAgent('ideator')">▶ Executar</button>
+        </div>
+        <div class="agent-meta">
+          Gera ângulos de conteúdo com gancho validado<br>
+          Output: <code style="color:var(--accent2)">angles.json</code> &nbsp;·&nbsp;
+          <span id="last-ideator">Ainda não executado</span>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="agent-name-row">
+            <div class="agent-status-dot missing" id="dot-scripter"></div>
+            <span class="agent-name">Scripter</span>
+            <span class="agent-seq">3/4</span>
+          </div>
+          <button class="btn btn-run" id="btn-scripter" onclick="runAgent('scripter')">▶ Executar</button>
+        </div>
+        <div class="agent-meta">
+          Transforma ângulos em roteiros prontos para gravar<br>
+          Output: <code style="color:var(--accent2)">scripts.json</code> &nbsp;·&nbsp;
+          <span id="last-scripter">Ainda não executado</span>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-header">
+          <div class="agent-name-row">
+            <div class="agent-status-dot missing" id="dot-analyst"></div>
+            <span class="agent-name">Analyst</span>
+            <span class="agent-seq">4/4</span>
+          </div>
+          <button class="btn btn-run" id="btn-analyst" onclick="openAnalystModal()">▶ Executar</button>
+        </div>
+        <div class="agent-meta">
+          Analisa métricas @leonardo_ames — execute às segundas<br>
+          Output: <code style="color:var(--accent2)">relatorio_semana_*.md</code> &nbsp;·&nbsp;
+          <span id="last-analyst">Ainda não executado</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Terminal de execução -->
+    <div id="terminal-wrap" class="terminal-wrap">
+      <div class="terminal-header">
+        <span class="terminal-title" id="terminal-title">log de execução</span>
+        <button class="btn btn-ghost" onclick="clearTerminal()" style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;letter-spacing:0.05em;">LIMPAR</button>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+
+    <!-- Sinais do ciclo (populados dinamicamente) -->
+    <div id="sinais-section" style="display:none">
+      <div class="section-header">
+        <h2>Sinais do Ciclo</h2>
+        <div class="line"></div>
+        <div class="count" id="sinais-count">—</div>
+      </div>
+      <div class="grid-2" id="sinais-grid"></div>
+    </div>
+
+    <!-- Notas operacionais estáticas do ciclo -->
+    <div id="notas-section" style="display:none">
+      <div class="section-header">
+        <h2>Resumo de Produção</h2>
+        <div class="line"></div>
+      </div>
+      <div class="relatorio-grid">
+        <div class="relatorio-block">
+          <h3>Observações do ciclo</h3>
+          <div id="notas-content"></div>
+        </div>
+        <div class="relatorio-block">
+          <h3>Distribuição dos outputs</h3>
+          <div id="metricas-content"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══ TÓPICOS ══ -->
+  <section id="topicos" class="section">
+
+    <div class="filter-row">
+      <span class="filter-label">Filtrar:</span>
+      <div class="chip active" onclick="filterTopics('todos', this)">Todos</div>
+      <div class="chip" onclick="filterTopics('alto', this)">Alto sinal</div>
+      <div class="chip" onclick="filterTopics('medio', this)">Médio sinal</div>
+      <div class="chip" onclick="filterTopics('Instagram', this)">Instagram</div>
+      <div class="chip" onclick="filterTopics('Twitter/X', this)">Twitter/X</div>
+      <div class="chip" onclick="filterTopics('Ambas', this)">Ambas</div>
+    </div>
+
+    <div id="topics-content">
+      <div class="empty-state">
+        <div class="empty-icon">📡</div>
+        <p>Execute o Researcher para ver os tópicos</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══ ÂNGULOS ══ -->
+  <section id="angulos" class="section">
+
+    <div class="filter-row">
+      <span class="filter-label">Potencial:</span>
+      <div class="chip active" id="chip-all-a" onclick="filterAngulos('all', this)">Todos</div>
+      <div class="chip" id="chip-alto-a"       onclick="filterAngulos('alto', this)">Alto</div>
+      <div class="chip" id="chip-medio-a"      onclick="filterAngulos('medio', this)">Médio</div>
+      <span class="filter-label" style="margin-left:8px">Rede:</span>
+      <div class="chip" onclick="filterAngulos('Instagram', this)">Instagram</div>
+      <div class="chip" onclick="filterAngulos('Twitter/X', this)">Twitter/X</div>
+      <div class="chip" onclick="filterAngulos('Ambos', this)">Ambos</div>
+      <span class="filter-label" style="margin-left:8px">Formato:</span>
+      <div class="chip" onclick="filterAngulos('carrossel', this)">Carrossel</div>
+      <div class="chip" onclick="filterAngulos('thread', this)">Thread</div>
+      <div class="chip" onclick="filterAngulos('video', this)">Vídeo</div>
+    </div>
+
+    <div id="angles-content">
+      <div class="empty-state">
+        <div class="empty-icon">💡</div>
+        <p>Execute o Ideator para ver os ângulos</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══ ROTEIROS ══ -->
+  <section id="roteiros" class="section">
+
+    <div class="filter-row">
+      <span class="filter-label">Rede:</span>
+      <div class="chip active" id="chip-all-r"   onclick="filterRoteiros('all', this)">Todos</div>
+      <div class="chip" id="chip-ig-r"            onclick="filterRoteiros('Instagram', this)">Instagram</div>
+      <div class="chip" id="chip-tw-r"            onclick="filterRoteiros('Twitter/X', this)">Twitter/X</div>
+      <span class="filter-label" style="margin-left:8px">Formato:</span>
+      <div class="chip" onclick="filterRoteiros('carrossel', this)">Carrossel</div>
+      <div class="chip" onclick="filterRoteiros('thread', this)">Thread</div>
+      <div class="chip" onclick="filterRoteiros('video', this)">Vídeo</div>
+    </div>
+
+    <div id="scripts-content">
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <p>Execute o Scripter para ver os roteiros</p>
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">Pipeline de Marketing · <span id="footer-cycle">—</span></div>
+  <div class="footer-cycle">@leonardo_ames</div>
+</footer>
+
+<!-- MODAL: Analyst -->
+<div id="modal-analyst" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-eyebrow">Agente 4 / 4</div>
+    <div class="modal-title">Executar Analyst</div>
+    <div class="modal-desc">
+      Cole as métricas da semana do perfil <strong>@leonardo_ames</strong>.<br>
+      Instagram: alcance, saves, compartilhamentos, comentários, follows.<br>
+      Twitter/X: impressões, retweets, respostas, curtidas, novos seguidores.
+    </div>
+    <textarea id="analyst-metrics" placeholder="Ex:&#10;Post 1 — Tráfego pago vs orgânico&#10;Instagram: 4.200 alcance, 312 saves, 89 compartilhamentos, 41 comentários, 28 follows&#10;&#10;Post 2 — Full do ML..."></textarea>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAnalystModal()">Cancelar</button>
+      <button class="btn btn-run" onclick="submitAnalyst()">▶ Executar Analyst</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Config -->
+<div id="modal-config" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-eyebrow">Configuração</div>
+    <div class="modal-title">URL do Backend</div>
+    <div class="modal-desc">
+      Cole a URL do seu servidor local ou túnel ngrok.<br>
+      Ex: <code>http://localhost:5050</code> ou <code>https://xxxx.ngrok-free.app</code>
+    </div>
+    <input id="config-url-input" type="text" placeholder="http://localhost:5050"
+      style="width:100%;padding:10px 12px;background:var(--surface);border:1px solid var(--border);
+             color:var(--text);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;margin-top:8px;" />
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfigModal()">Cancelar</button>
+      <button class="btn btn-run" onclick="saveConfig()">Salvar e recarregar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
