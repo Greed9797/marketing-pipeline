@@ -10,27 +10,29 @@
 
 <!-- HEADER -->
 <header class="header">
-  <div>
+  <div class="header-left">
     <div class="header-eyebrow">Pipeline de Marketing · Ciclo semanal</div>
-    <h1>Relatório de <em>Inteligência</em><br>de Conteúdo</h1>
+    <h1>Relatório de <em>Inteligência</em> de Conteúdo</h1>
   </div>
-  <div class="header-meta">
+  <div class="header-right">
     <div class="header-date" id="header-date">— / —<br>—</div>
-    <div class="header-status">
-      <span class="status-dot-header"></span>
+    <div class="header-status-pill">
+      <span class="status-dot-header" id="status-dot-header"></span>
       <span id="header-status-text">CARREGANDO</span>
     </div>
-    <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">◐ TEMA</button>
-    <button class="btn btn-ghost" onclick="openConfigModal()" title="Configurar backend URL" style="font-size:16px;padding:4px 8px;margin-left:8px;">⚙</button>
+    <div class="header-actions">
+      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()">◐ TEMA</button>
+      <button class="btn btn-ghost" onclick="openConfigModal()" style="font-size:14px;padding:5px 10px;">⚙</button>
+    </div>
   </div>
 </header>
 
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-tab active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">Visão Geral</div>
-  <div class="nav-tab" data-tab="topicos"   onclick="switchTab('topicos', this)">Tópicos</div>
-  <div class="nav-tab" data-tab="angulos"   onclick="switchTab('angulos', this)">Ângulos</div>
-  <div class="nav-tab" data-tab="roteiros"  onclick="switchTab('roteiros', this)">Roteiros</div>
+  <div class="nav-tab" data-tab="topicos" onclick="switchTab('topicos', this)">Tópicos <span class="tab-badge" id="badge-topicos"></span></div>
+  <div class="nav-tab" data-tab="angulos" onclick="switchTab('angulos', this)">Ângulos <span class="tab-badge" id="badge-angulos"></span></div>
+  <div class="nav-tab" data-tab="roteiros" onclick="switchTab('roteiros', this)">Roteiros <span class="tab-badge" id="badge-roteiros"></span></div>
 </nav>
 
 <!-- CONTENT -->
@@ -42,23 +44,35 @@
     <!-- KPIs dinâmicos -->
     <div class="kpi-row">
       <div class="kpi-card green">
-        <div class="kpi-label">Tópicos mapeados</div>
+        <div class="kpi-header">
+          <div class="kpi-label">Tópicos mapeados</div>
+          <div class="kpi-icon">📡</div>
+        </div>
         <div class="kpi-value" id="kpi-topics">—</div>
         <div class="kpi-sub" id="kpi-topics-sub">Execute o Researcher</div>
       </div>
       <div class="kpi-card teal">
-        <div class="kpi-label">Ângulos gerados</div>
+        <div class="kpi-header">
+          <div class="kpi-label">Ângulos gerados</div>
+          <div class="kpi-icon">💡</div>
+        </div>
         <div class="kpi-value" id="kpi-angles">—</div>
         <div class="kpi-sub" id="kpi-angles-sub">Execute o Ideator</div>
       </div>
       <div class="kpi-card yellow">
-        <div class="kpi-label">Roteiros prontos</div>
+        <div class="kpi-header">
+          <div class="kpi-label">Roteiros prontos</div>
+          <div class="kpi-icon">📝</div>
+        </div>
         <div class="kpi-value" id="kpi-scripts">—</div>
         <div class="kpi-sub" id="kpi-scripts-sub">Execute o Scripter</div>
       </div>
       <div class="kpi-card red">
-        <div class="kpi-label">Ciclo ativo</div>
-        <div class="kpi-value" id="kpi-cycle" style="font-size:22px;padding-top:6px">—</div>
+        <div class="kpi-header">
+          <div class="kpi-label">Ciclo ativo</div>
+          <div class="kpi-icon">📅</div>
+        </div>
+        <div class="kpi-value" id="kpi-cycle" style="font-size:18px;padding-top:4px">—</div>
         <div class="kpi-sub" id="kpi-cycle-sub">busca_DD_MM_YYYY</div>
       </div>
     </div>
@@ -68,6 +82,38 @@
       <h2>Agentes do Pipeline</h2>
       <div class="line"></div>
       <button class="btn btn-ghost" onclick="refreshAll()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.06em;padding:4px 12px;">↻ ATUALIZAR</button>
+    </div>
+
+    <!-- Pipeline bar -->
+    <div class="pipeline-bar">
+      <div class="pipeline-step" id="pipe-researcher">
+        <div class="pipeline-step-num">1</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Researcher</div>
+          <div class="pipeline-step-state" id="pipe-state-researcher">aguardando</div>
+        </div>
+      </div>
+      <div class="pipeline-step" id="pipe-ideator">
+        <div class="pipeline-step-num">2</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Ideator</div>
+          <div class="pipeline-step-state" id="pipe-state-ideator">aguardando</div>
+        </div>
+      </div>
+      <div class="pipeline-step" id="pipe-scripter">
+        <div class="pipeline-step-num">3</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Scripter</div>
+          <div class="pipeline-step-state" id="pipe-state-scripter">aguardando</div>
+        </div>
+      </div>
+      <div class="pipeline-step" id="pipe-analyst">
+        <div class="pipeline-step-num">4</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Analyst</div>
+          <div class="pipeline-step-state" id="pipe-state-analyst">aguardando</div>
+        </div>
+      </div>
     </div>
 
     <div class="agents-grid">
@@ -141,8 +187,9 @@
     <!-- Terminal de execução -->
     <div id="terminal-wrap" class="terminal-wrap">
       <div class="terminal-header">
+        <div class="terminal-dots"><span></span><span></span><span></span></div>
         <span class="terminal-title" id="terminal-title">log de execução</span>
-        <button class="btn btn-ghost" onclick="clearTerminal()" style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;letter-spacing:0.05em;">LIMPAR</button>
+        <button class="btn btn-ghost" onclick="clearTerminal()" style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;">LIMPAR</button>
       </div>
       <div class="terminal-body" id="terminal-body"></div>
     </div>
@@ -284,15 +331,16 @@
       Cole a URL do seu servidor local ou túnel ngrok.<br>
       Ex: <code>http://localhost:5050</code> ou <code>https://xxxx.ngrok-free.app</code>
     </div>
-    <input id="config-url-input" type="text" placeholder="http://localhost:5050"
-      style="width:100%;padding:10px 12px;background:var(--surface);border:1px solid var(--border);
-             color:var(--text);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;margin-top:8px;" />
+    <input id="config-url-input" type="text" placeholder="http://localhost:5050" />
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeConfigModal()">Cancelar</button>
       <button class="btn btn-run" onclick="saveConfig()">Salvar e recarregar</button>
     </div>
   </div>
 </div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
 
 <script src="app.js"></script>
 </body>

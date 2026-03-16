@@ -25,6 +25,19 @@ function toggleTheme() {
   if (btn) btn.textContent = isDark ? '◑ TEMA' : '◐ TEMA';
 }
 
+// ── Toast ─────────────────────────────────────────
+function showToast(msg, type = 'ok') {
+  const container = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('toast-out');
+    t.addEventListener('animationend', () => t.remove(), { once: true });
+  }, 3500);
+}
+
 // ── Init ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('pipeline_theme') === 'dark') {
@@ -89,6 +102,37 @@ async function fetchStatus() {
   if (anyRunning)   statusEl.textContent = 'AGENTE EXECUTANDO';
   else if (allOk)   statusEl.textContent = 'PIPELINE COMPLETO';
   else              statusEl.textContent = 'AGUARDANDO EXECUÇÃO';
+
+  // Update pipeline steps
+  ['researcher','ideator','scripter','analyst'].forEach(name => {
+    const info = d[name];
+    const step = document.getElementById(`pipe-${name}`);
+    const state = document.getElementById(`pipe-state-${name}`);
+    if (!step) return;
+    step.className = 'pipeline-step';
+    if (info.is_running) {
+      step.classList.add('step-running');
+      state.textContent = 'executando...';
+    } else if (info.status === 'ok') {
+      step.classList.add('step-ok');
+      if (info.last_run) {
+        const dt = new Date(info.last_run);
+        state.textContent = `${dt.toLocaleDateString('pt-BR')} ${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+      } else {
+        state.textContent = 'completo';
+      }
+    } else {
+      state.textContent = 'aguardando';
+    }
+  });
+
+  // Update header dot
+  const dot = document.getElementById('status-dot-header');
+  if (dot) {
+    dot.className = 'status-dot-header';
+    if (anyRunning) dot.classList.add('running');
+    else if (allOk) dot.classList.add('ok');
+  }
 }
 
 function updateAgentCard(name, info) {
@@ -118,6 +162,12 @@ function updateAgentCard(name, info) {
     last.textContent = `${dt.toLocaleDateString('pt-BR')} ${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
   } else {
     last.textContent = 'Ainda não executado';
+  }
+
+  // Toggle is-running class on the card
+  const card = document.querySelector(`#btn-${name}`)?.closest('.agent-card');
+  if (card) {
+    card.classList.toggle('is-running', !!info.is_running);
   }
 }
 
@@ -169,6 +219,12 @@ function startPolling(name) {
       clearInterval(pollingTimers[name]);
       delete pollingTimers[name];
       await Promise.all([fetchStatus(), fetchAllData()]);
+      // Toast notification on completion
+      const success = d.logs.some(l => l.includes('✓') || l.includes('concluído') || l.includes('salvo'));
+      showToast(
+        success ? `${name} concluído com sucesso` : `${name} finalizado`,
+        success ? 'ok' : 'warn'
+      );
     }
   }, 1500);
 }
@@ -221,6 +277,9 @@ async function fetchTopics() {
   const alto = d.topicos.filter(t => t.confianca_do_sinal === 'alto').length;
   document.getElementById('kpi-topics').textContent = n;
   document.getElementById('kpi-topics-sub').textContent = `${alto} alto · ${n-alto} médio sinal`;
+  // Update tab badge
+  const badge = document.getElementById('badge-topicos');
+  if (badge) badge.textContent = n;
   renderTopics('todos');
   renderSinais(d);
 }
@@ -233,6 +292,9 @@ async function fetchAngulos() {
   const alto = d.angulos.filter(a => a.potencial_estimado === 'alto').length;
   document.getElementById('kpi-angles').textContent = n;
   document.getElementById('kpi-angles-sub').textContent = `${alto} alto · ${n-alto} médio potencial`;
+  // Update tab badge
+  const badge = document.getElementById('badge-angulos');
+  if (badge) badge.textContent = n;
   renderAngulos('all');
   renderNotas(d);
 }
@@ -244,6 +306,9 @@ async function fetchRoteiros() {
   const n = d.roteiros.length;
   document.getElementById('kpi-scripts').textContent = n;
   document.getElementById('kpi-scripts-sub').textContent = `Priorizados por potencial alto`;
+  // Update tab badge
+  const badge = document.getElementById('badge-roteiros');
+  if (badge) badge.textContent = n;
   renderRoteiros('all');
 }
 
@@ -364,18 +429,20 @@ function renderTopics(filter) {
   `).join('');
 
   container.innerHTML = `
-    <table class="topics-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Tema</th>
-          <th>Ângulo inicial</th>
-          <th>Rede</th>
-          <th>Sinal</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
+    <div class="topics-table-wrap">
+      <table class="topics-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tema</th>
+            <th>Ângulo inicial</th>
+            <th>Rede</th>
+            <th>Sinal</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -407,9 +474,9 @@ function renderAngulos(filter) {
   }
 
   const cards = items.map((a, i) => {
-    const tc = tipoColor[a.tipo] || 'var(--text-muted)';
+    const tc = tipoColor[a.tipo] || 'var(--border-bright)';
     return `
-      <div class="angulo-card" style="--i:${i}">
+      <div class="angulo-card" style="--tipo-color:${tc};--i:${i}">
         <div class="angulo-tipo">
           <span style="color:${tc}">${esc(a.tipo)}</span>
           <span class="num-chip">#${a.angulo_numero} · ${esc(a.topico)}</span>
@@ -477,16 +544,20 @@ function renderRoteiros(filter) {
           <div class="roteiro-toggle">+</div>
         </div>
         <div class="roteiro-body">
-          <div class="roteiro-gancho-box">
-            <div class="roteiro-gancho-label">Gancho</div>
-            <div class="roteiro-gancho-text">${esc(r.roteiro.gancho)}</div>
+          <div class="roteiro-body-inner">
+            <div class="roteiro-body-inner-pad">
+              <div class="roteiro-gancho-box">
+                <div class="roteiro-gancho-label">Gancho</div>
+                <div class="roteiro-gancho-text">${esc(r.roteiro.gancho)}</div>
+              </div>
+              <div class="slides-list">${slidesHtml}</div>
+              <div class="cta-box">
+                <span class="cta-label">CTA</span>
+                <span class="cta-text">${esc(r.roteiro.cta)}</span>
+              </div>
+              <div class="visual-box">🎨 ${esc(r.roteiro.sugestao_visual)}</div>
+            </div>
           </div>
-          <div class="slides-list">${slidesHtml}</div>
-          <div class="cta-box">
-            <span class="cta-label">CTA</span>
-            <span class="cta-text">${esc(r.roteiro.cta)}</span>
-          </div>
-          <div class="visual-box">🎨 ${esc(r.roteiro.sugestao_visual)}</div>
         </div>
       </div>
     `;
