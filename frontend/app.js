@@ -22,7 +22,7 @@ function toggleTheme() {
   const isDark = document.body.classList.toggle('dark');
   localStorage.setItem('pipeline_theme', isDark ? 'dark' : 'light');
   const btn = document.getElementById('btn-theme');
-  if (btn) btn.textContent = isDark ? '☀' : '🌙';
+  if (btn) btn.textContent = isDark ? '◑ TEMA' : '◐ TEMA';
 }
 
 // ── Init ─────────────────────────────────────────
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (localStorage.getItem('pipeline_theme') === 'dark') {
     document.body.classList.add('dark');
     const btn = document.getElementById('btn-theme');
-    if (btn) btn.textContent = '☀';
+    if (btn) btn.textContent = '◑ TEMA';
   }
   refreshAll();
   setInterval(refreshAll, 30000);
