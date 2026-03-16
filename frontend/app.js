@@ -17,8 +17,21 @@ const tipoColor = {
   'opinião':         '#d080f0',
 };
 
+// ── Tema ─────────────────────────────────────────
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('pipeline_theme', isDark ? 'dark' : 'light');
+  const btn = document.getElementById('btn-theme');
+  if (btn) btn.textContent = isDark ? '☀' : '🌙';
+}
+
 // ── Init ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('pipeline_theme') === 'dark') {
+    document.body.classList.add('dark');
+    const btn = document.getElementById('btn-theme');
+    if (btn) btn.textContent = '☀';
+  }
   refreshAll();
   setInterval(refreshAll, 30000);
 });
