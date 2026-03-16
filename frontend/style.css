@@ -113,7 +113,7 @@ body {
 
 .header-eyebrow {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 20px;
   color: var(--accent);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -121,7 +121,7 @@ body {
 
 .header h1 {
   font-family: 'Sora', sans-serif;
-  font-size: 20px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--text);
   line-height: 1.2;
@@ -1399,7 +1399,8 @@ body {
 
 @media (max-width: 900px) {
   .header  { padding: 12px 24px; }
-  .header h1 { font-size: 16px; }
+  .header h1 { font-size: 26px; }
+  .header-eyebrow { font-size: 13px; }
   .nav     { padding: 0 24px; overflow-x: auto; top: 53px; }
   .content { padding: 24px; }
   .footer  { padding: 20px 24px; }
