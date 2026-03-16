@@ -504,7 +504,11 @@ function filterRoteiros(f, el) {
 // ── Utils ─────────────────────────────────────────
 async function fetchJson(url, opts = {}) {
   try {
-    const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+    const headers = {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
+      ...(opts.headers || {}),
+    };
     const r = await fetch(url, { ...opts, headers });
     if (!r.ok) return null;
     return await r.json();
